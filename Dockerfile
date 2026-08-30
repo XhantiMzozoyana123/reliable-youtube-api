@@ -21,19 +21,17 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends yt-dlp ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
-# Run as a non-root user
-RUN useradd --create-home --uid 1000 appuser \
-    && mkdir -p /app/App_Data/jobs \
-    && chown -R appuser:appuser /app/App_Data
+# Run as the built-in non-root 'app' user that ships with the .NET images
+RUN mkdir -p /app/App_Data/jobs && chown -R app:app /app/App_Data
 WORKDIR /app
 
 ENV ASPNETCORE_URLS=http://+:8080 \
     ASPNETCORE_HTTP_PORTS=8080 \
     DOTNET_EnableDiagnostics=0
 
-COPY --from=build /app/publish .
+COPY --from=build --chown=app:app /app/publish .
 
-USER appuser
+USER app
 
 EXPOSE 8080
 
