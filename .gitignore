@@ -1,0 +1,20 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+
+## Visual Studio / VS Code
+.vs/
+.vscode/
+*.log
+
+## Runtime data
+App_Data/
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Secrets / env (keep docker-compose.yml template only)
+.env

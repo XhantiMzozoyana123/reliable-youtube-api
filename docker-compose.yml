@@ -1,0 +1,28 @@
+﻿services:
+  youtubedownload-api:
+    build: .
+    image: youtubedownload-api:latest
+    container_name: youtubedownload-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      # durable job state + downloaded outputs survive restarts
+      - jobs-data:/app/App_Data
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      # Point this at your VPS public URL so download URLs are reachable by customers
+      DownloadJobs__PublicBaseUrl: "http://localhost:8080"
+      # Authentication - pick one:
+      # Authentication__Enabled: "true"
+      # Authentication__Mode: "Keys"             # or "Gateway" behind RapidAPI
+      DownloadJobs__OutputDirectory: "App_Data/jobs"
+      DownloadJobs__Persistence: "FileSystem"
+      DownloadJobs__Provider: "YtDlp"          # Simulated | YtDlp
+      DownloadJobs__YtDlpPath: "/usr/bin/yt-dlp"
+      # Authentication__AllowedKeys__0: "change-me"
+      # Authentication__RapidApiProxySecret: "change-me"
+
+volumes:
+  jobs-data:
+

@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/YoutubeDownload.Api/YoutubeDownload.Api.csproj" />
+    <Project Path="src/YoutubeDownload.Application/YoutubeDownload.Application.csproj" />
+    <Project Path="src/YoutubeDownload.Domain/YoutubeDownload.Domain.csproj" />
+    <Project Path="src/YoutubeDownload.Infrastructure/YoutubeDownload.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/YoutubeDownload.Tests/YoutubeDownload.Tests.csproj" />
+  </Folder>
+</Solution>
