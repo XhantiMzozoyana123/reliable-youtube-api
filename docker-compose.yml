@@ -5,14 +5,14 @@
     container_name: youtubedownload-api
     restart: unless-stopped
     ports:
-      - "8081:8080"   # host 8081 -> container 8080 (8080 was in use on the VPS)
+      - "8090:8080"   # host 8090 -> container 8080 (8080/8081 occupied on the VPS)
     volumes:
       # durable job state + downloaded outputs survive restarts
       - jobs-data:/app/App_Data
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       # Point this at your VPS public URL so download URLs are reachable by customers
-      DownloadJobs__PublicBaseUrl: "http://46.202.170.203:8081"
+      DownloadJobs__PublicBaseUrl: "http://46.202.170.203:8090"
       # Authentication - pick one:
       # Authentication__Enabled: "true"
       # Authentication__Mode: "Keys"             # or "Gateway" behind RapidAPI
