@@ -6,7 +6,7 @@ namespace YoutubeDownload.Api.Controllers
     {
         private static EndpointDoc BuildCreateJob() => new()
         {
-            Title = "Create a Download Job",
+            Title = "Create Download Job",
             HttpMethod = "POST",
             Route = "/v1/download",
             AuthRequired = true,

@@ -25,7 +25,7 @@ namespace YoutubeDownload.Api.Controllers
 
         private static EndpointDoc BuildCancel() => new()
         {
-            Title = "Cancel a Job",
+            Title = "Cancel Download Job",
             HttpMethod = "DELETE",
             Route = "/v1/download/{jobId}",
             AuthRequired = true,

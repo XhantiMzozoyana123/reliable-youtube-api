@@ -1,4 +1,4 @@
-@model IEnumerable<YoutubeDownload.Api.Models.EndpointSummary>
+﻿@model IEnumerable<YoutubeDownload.Api.Models.EndpointSummary>
 @{
     ViewData["Title"] = "Documentation";
 }
@@ -20,6 +20,7 @@
                             <span class="meth @e.HttpMethod.ToLower()">@e.HttpMethod</span>
                             <span class="path">@e.Route</span>
                         </div>
+                        <div class="endpoint-name">@e.Title</div>
                         <span class="desc">@e.Description</span>
                         <a href="@Url.Action(e.ActionName)" class="badge ok">Docs</a>
                     </div>

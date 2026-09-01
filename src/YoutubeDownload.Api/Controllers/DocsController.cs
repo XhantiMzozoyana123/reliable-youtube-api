@@ -19,13 +19,13 @@ namespace YoutubeDownload.Api.Controllers
         {
             var items = new[]
             {
-                new EndpointSummary("Create a Download Job", "POST",   "/v1/download",            "Submit a YouTube URL and start an async download.", nameof(CreateJob)),
-                new EndpointSummary("Get Job Status",        "GET",    "/v1/download/{jobId}",    "Poll progress, stage and final result.",            nameof(JobStatus)),
-                new EndpointSummary("List Formats",          "GET",    "/v1/download/{jobId}/formats", "Discover formats/qualities for the media.",     nameof(Formats)),
-                new EndpointSummary("Cancel a Job",          "DELETE", "/v1/download/{jobId}",    "Cancel an active download job.",                 nameof(Cancel)),
-                new EndpointSummary("Download Output",       "GET",    "/v1/download/{jobId}/content", "Stream the completed file (binary).",           nameof(Content)),
-                new EndpointSummary("Reliability Metrics",   "GET",    "/v1/account/usage",       "Success/retry/percentile telemetry snapshot.",   nameof(AccountUsage)),
-                new EndpointSummary("Health",                "GET",    "/health",                 "Liveness probe (no auth).",                      nameof(Health))
+                new EndpointSummary("Create Download Job",     "POST",   "/v1/download",            "Submit a YouTube URL and start an async download.", nameof(CreateJob)),
+                new EndpointSummary("Get Job Status",         "GET",    "/v1/download/{jobId}",    "Poll progress, stage and final result.",            nameof(JobStatus)),
+                new EndpointSummary("List Available Formats", "GET",    "/v1/download/{jobId}/formats", "Discover formats/qualities for the media.",     nameof(Formats)),
+                new EndpointSummary("Cancel Download Job",    "DELETE", "/v1/download/{jobId}",    "Cancel an active download job.",                 nameof(Cancel)),
+                new EndpointSummary("Download Media Content", "GET",    "/v1/download/{jobId}/content", "Stream the completed file (binary).",           nameof(Content)),
+                new EndpointSummary("Get Reliability Metrics","GET",    "/v1/account/usage",       "Success/retry/percentile telemetry snapshot.",   nameof(AccountUsage)),
+                new EndpointSummary("Health Check",           "GET",    "/health",                 "Liveness probe (no auth).",                      nameof(Health))
             };
             return View(items);
         }

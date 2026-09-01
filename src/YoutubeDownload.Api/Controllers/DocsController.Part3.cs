@@ -6,7 +6,7 @@ namespace YoutubeDownload.Api.Controllers
     {
         private static EndpointDoc BuildContent() => new()
         {
-            Title = "Download Output",
+            Title = "Download Media Content",
             HttpMethod = "GET",
             Route = "/v1/download/{jobId}/content",
             AuthRequired = true,
@@ -26,7 +26,7 @@ namespace YoutubeDownload.Api.Controllers
 
         private static EndpointDoc BuildAccountUsage() => new()
         {
-            Title = "Reliability Metrics",
+            Title = "Get Reliability Metrics",
             HttpMethod = "GET",
             Route = "/v1/account/usage",
             AuthRequired = true,
@@ -41,7 +41,7 @@ namespace YoutubeDownload.Api.Controllers
 
         private static EndpointDoc BuildHealth() => new()
         {
-            Title = "Health",
+            Title = "Health Check",
             HttpMethod = "GET",
             Route = "/health",
             AuthRequired = false,

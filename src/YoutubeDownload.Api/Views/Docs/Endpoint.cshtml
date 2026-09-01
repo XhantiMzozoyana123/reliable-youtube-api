@@ -9,8 +9,9 @@
         <div class="endpoint-head">
             <span class="meth-inline @meth">@Model.HttpMethod</span>
             <span class="route">@Model.Route</span>
-            @if (Model.AuthRequired) { <span class="badge ok">Auth required</span> } else { <span class="badge">No auth</span> }
+                        @if (Model.AuthRequired) { <span class="badge ok">Auth required</span> } else { <span class="badge">No auth</span> }
         </div>
+        <h2 class="endpoint-title">@Model.Title</h2>
         <p class="muted">@Model.Overview</p>
     </div>
 
