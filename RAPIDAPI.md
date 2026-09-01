@@ -19,7 +19,7 @@ transient failures are recovered without the caller retrying.
 | **Authentication** | `X-RapidAPI-Key` header (RapidAPI-managed). See [Authentication](#authentication). |
 | **Response format** | `application/json` (UTF-8) for all JSON bodies |
 | **Date format** | ISO 8601 with timezone, e.g. `2025-09-01T11:04:32Z` |
-| **Default media provider** | `Simulated` (works out of the box). Set `DownloadJobs:Provider=YtDlp` to download real media. |
+| **Media retrieval** | Managed automatically — nothing to install or configure. |
 
 ## Table of Contents
 
@@ -40,7 +40,7 @@ transient failures are recovered without the caller retrying.
 8. [Error Handling](#error-handling)
 9. [Job Error Codes Reference](#job-error-codes-reference)
 10. [Data Types](#data-types)
-11. [Configuration & Deployment Notes](#configuration--deployment-notes)
+11. [Recommended RapidAPI Listing Configuration](#recommended-rapidapi-listing-configuration)
 
 ## Quick Start
 
@@ -361,7 +361,7 @@ curl -X GET "https://reliable-youtube-download.p.rapidapi.com/v1/download/job_4f
   "timeline": [
     { "atUtc": "2025-09-01T11:04:32Z", "message": "Job created and queued" },
     { "atUtc": "2025-09-01T11:04:33Z", "message": "Processing started" },
-    { "atUtc": "2025-09-01T11:04:33Z", "message": "Resolution started (provider: simulated)" },
+    { "atUtc": "2025-09-01T11:04:33Z", "message": "Resolution started" },
     { "atUtc": "2025-09-01T11:04:33Z", "message": "Selected 720p Mp4 (format id 22)" },
     { "atUtc": "2025-09-01T11:04:33Z", "message": "Download attempt 1/3 started" }
   ]
@@ -398,7 +398,7 @@ attempt failed transitively and was auto-recovered:
   "timeline": [
     { "atUtc": "2025-09-01T11:04:32Z", "message": "Job created and queued" },
     { "atUtc": "2025-09-01T11:04:33Z", "message": "Processing started" },
-    { "atUtc": "2025-09-01T11:04:33Z", "message": "Resolution started (provider: simulated)" },
+    { "atUtc": "2025-09-01T11:04:33Z", "message": "Resolution started" },
     { "atUtc": "2025-09-01T11:04:33Z", "message": "Selected 720p Mp4 (format id 22)" },
     { "atUtc": "2025-09-01T11:04:33Z", "message": "Download attempt 1/3 started" },
     { "atUtc": "2025-09-01T11:04:34Z", "message": "Attempt 1 failed (DownloadFailed): The media connection was reset during download. — retrying" },
@@ -434,7 +434,7 @@ attempt failed transitively and was auto-recovered:
   "timeline": [
     { "atUtc": "2025-09-01T11:04:32Z", "message": "Job created and queued" },
     { "atUtc": "2025-09-01T11:04:33Z", "message": "Processing started" },
-    { "atUtc": "2025-09-01T11:04:33Z", "message": "Resolution started (provider: simulated)" },
+    { "atUtc": "2025-09-01T11:04:33Z", "message": "Resolution started" },
     { "atUtc": "2025-09-01T11:04:33Z", "message": "Failed (VideoUnavailable): The requested media is unavailable..." }
   ]
 }
@@ -792,65 +792,11 @@ These codes are part of the public API contract and are stable. They appear insi
 | `M4a` | `audio/mp4` |
 | `Wav` | `audio/wav` |
 
-## Configuration & Deployment Notes
 
-### Running locally
-
-```bash
-dotnet run --project src/YoutubeDownload.Api --urls http://localhost:5000
-```
-
-The default configuration uses the **`Simulated`** provider, which requires no external
-dependencies and demonstrates the full pipeline (including automatic retry recovery). URLs
-containing `unavailable` simulate `VideoUnavailable`; URLs containing `flaky` fail the first
-download attempt and recover on retry.
-
-### Running with real downloads (yt-dlp)
-
-Set the environment variable to enable the real provider:
-
-```bash
-DownloadJobs__Provider=YtDlp
-DownloadJobs__YtDlpPath=/usr/bin/yt-dlp
-```
-
-### Running behind RapidAPI (Docker)
-
-The `docker-compose.yml` ships a production-ready configuration. **Set `PublicBaseUrl` to the
-RapidAPI gateway URL** so returned `downloadUrl`s are reachable by consumers through the
-gateway:
-
-```yaml
-environment:
-  ASPNETCORE_ENVIRONMENT: Production
-  DownloadJobs__PublicBaseUrl: "https://reliable-youtube-download.p.rapidapi.com"
-  DownloadJobs__Provider: "YtDlp"          # or "Simulated"
-  DownloadJobs__Persistence: "FileSystem"  # durable: survives restarts
-  DownloadJobs__OutputRetentionMinutes: "60"
-  # Authentication — Gateway mode verifies the RapidAPI proxy secret:
-  Authentication__Enabled: "true"
-  Authentication__Mode: "Gateway"
-  Authentication__RapidApiProxySecret: "<your-rapidapi-proxy-secret>"
-```
-
-Key production behaviours worth highlighting:
-
-| Feature | Details |
-|---|---|
-| **Durable persistence** | `FileJobStore` writes one JSON document per job (atomic temp-file + rename) and `FileSystemFileStorage` writes outputs to disk. Jobs and files survive restarts. |
-| **Streaming delivery** | `/content` streams from disk with range-request support; large files never fit fully in memory. |
-| **Per-job timeout** | A linked cancellation token (`JobTimeoutSeconds`, default 300 s) cancels any hung provider call with `TimedOut`. |
-| **Periodic cleanup** | Expired outputs are evicted every 2 minutes. |
-| **Cancellation propagation** | `DELETE` aborts an in-flight download immediately, not just the next retry. |
-| **Customer identity** | `X-RapidAPI-User` is captured as `accountId` on every job for attribution. |
-| **Truncation guard** | An output far below the estimated size fails `ValidationFailed` rather than being served. |
-| **Request IDs + timeline** | Every job carries a `requestId` and a full event timeline for support/debugging. |
-| **Gateway hardening** | `Mode = "Gateway"` rejects any request missing the correct `X-RapidAPI-Proxy-Secret`, blocking direct backend access. |
-
-### Recommended RapidAPI listing configuration
+## Recommended RapidAPI Listing Configuration
 
 When registering this API on RapidAPI, expose the routes exactly as mounted (the service
-maps controllers under `/v1/`). Recommend the following subscription plan defaults:
+maps routes under `/v1/`). Recommend the following subscription plan defaults:
 
 - **Authentication** on the RapidAPI side requires the `X-RapidAPI-Key` (and `X-RapidAPI-Host`)
   headers — supply these automatically to consumers.
@@ -875,4 +821,6 @@ GET    /health                           Liveness probe (no auth)        → 200
 
 ---
 
-*Generated for the Reliable & Fast YouTube Video Download API (ASP.NET Core, Clean Architecture).*
+*Generated for the Reliable & Fast YouTube Video Download API.*
+
+
