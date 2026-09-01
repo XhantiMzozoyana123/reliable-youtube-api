@@ -1,0 +1,123 @@
+@model YoutubeDownload.Api.Models.EndpointDoc
+@{
+    ViewData["Title"] = Model.Title;
+    var meth = Model.HttpMethod.ToLowerInvariant();
+}
+
+<div class="site-container">
+    <div class="card">
+        <div class="endpoint-head">
+            <span class="meth-inline @meth">@Model.HttpMethod</span>
+            <span class="route">@Model.Route</span>
+            @if (Model.AuthRequired) { <span class="badge ok">Auth required</span> } else { <span class="badge">No auth</span> }
+        </div>
+        <p class="muted">@Model.Overview</p>
+    </div>
+
+    @if (Model.PathParameters.Any())
+    {
+        <div class="card compact">
+            <h3>Path parameters</h3>
+            <table>
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th><th>Example</th></tr></thead>
+                <tbody>
+                    @foreach (var f in Model.PathParameters)
+                    {
+                        <tr>
+                            <td class="code">@f.Name</td>
+                            <td>@f.Type</td>
+                            <td>@(f.Required ? "yes" : "no")</td>
+                            <td>@f.Description</td>
+                            <td>@(f.Example != null ? $"'{f.Example}'" : "")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (Model.RequestHeaders.Any())
+    {
+        <div class="card compact">
+            <h3>Request headers</h3>
+            <table>
+                <thead><tr><th>Header</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody>
+                    @foreach (var f in Model.RequestHeaders)
+                    {
+                        <tr>
+                            <td class="code">@f.Name</td>
+                            <td>@f.Type</td>
+                            <td>@(f.Required ? "yes" : "no")</td>
+                            <td>@f.Description</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (Model.RequestBody.Any())
+    {
+        <div class="card compact">
+            <h3>Request body (@Model.HttpMethod @Model.Route)</h3>
+            <table>
+                <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th><th>Example</th></tr></thead>
+                <tbody>
+                    @foreach (var f in Model.RequestBody)
+                    {
+                        <tr>
+                            <td class="code">@f.Name</td>
+                            <td>@f.Type</td>
+                            <td>@(f.Required ? "yes" : "no")</td>
+                            <td>@f.Description</td>
+                            <td>@(f.Example != null ? $"'{f.Example}'" : "")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <div class="card compact">
+        <h3>Responses</h3>
+        <table>
+            <thead><tr><th>Status</th><th>Description</th><th>Body type</th><th>Example</th></tr></thead>
+            <tbody>
+                @foreach (var r in Model.Responses)
+                {
+                    <tr>
+                        <td class="code">@r.Status</td>
+                        <td>@r.Description</td>
+                        <td>@(r.BodyType ?? "json")</td>
+                        <td>
+                            @if (r.ExampleJson != null)
+                            {
+                                <pre><code>@r.ExampleJson</code></pre>
+                            }
+                            else
+                            {
+                                <span class="muted">—</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>cURL example</h3>
+        <pre><code class="bash">@Model.CurlExample</code></pre>
+    </div>
+
+    @if (Model.Notes != null)
+    {
+        <div class="notice">
+            <strong>Notes:</strong><br />
+            @Html.Raw(Model.Notes.Replace("\n", "<br />"))
+        </div>
+    }
+
+    <p style="margin-top:24px;"><a href="@Url.Action("Index")">Back to all endpoints</a></p>
+</div>

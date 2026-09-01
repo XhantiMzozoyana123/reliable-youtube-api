@@ -1,0 +1,35 @@
+@model IEnumerable<YoutubeDownload.Api.Models.EndpointSummary>
+@{
+    ViewData["Title"] = "Documentation";
+}
+
+<div class="site-container">
+    <div class="hero" style="padding:44px 0 28px;">
+        <h1>Documentation</h1>
+        <p class="lead">Endpoints of the Reliable YouTubeAPI by MyRapidAPI. Select an endpoint to read its full request/response reference.</p>
+    </div>
+
+    <main class="content">
+        <div class="card">
+            <h2>All endpoints</h2>
+            <div class="endpoints-grid">
+                @foreach (var e in Model)
+                {
+                    <div class="endpoint-row">
+                        <div class="left">
+                            <span class="meth @e.HttpMethod.ToLower()">@e.HttpMethod</span>
+                            <span class="path">@e.Route</span>
+                        </div>
+                        <span class="desc">@e.Description</span>
+                        <a href="@Url.Action(e.ActionName)" class="badge ok">Docs</a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Async pattern</h2>
+            <p>This API is asynchronous. Each <strong>POST</strong> returns a job id immediately; poll the matching GET until the job reaches a terminal state, then fetch the binary via the content endpoint. See the <a href="@Url.Action("Index", "Home")">Quick Start</a> for a worked example.</p>
+        </div>
+    </main>
+</div>

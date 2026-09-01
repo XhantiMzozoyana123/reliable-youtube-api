@@ -1,0 +1,98 @@
+@model dynamic
+@{
+    ViewData["Title"] = "Home";
+}
+
+<section class="hero">
+    <div class="site-container">
+        <span class="tag">RapidAPI · ASP.NET Core · YouTube video downloader</span>
+        <h1>Reliable YouTubeAPI by MyRapidAPI</h1>
+        <p class="lead">
+            A robust, asynchronous YouTube media download service on RapidAPI. Submit a video URL,
+            poll a job, and retrieve the file — with automatic retry recovery for transient failures
+            so your downloads keep succeeding where others drop.
+        </p>
+        <a class="btn" href="@Url.Action("Index", "Docs")" style="background:#3bb5fd;color:#0b1020;font-weight:600;padding:11px 22px;border-radius:8px;border:none;">View Documentation</a>
+    </div>
+</section>
+
+<div class="site-container">
+    <div class="layout">
+        <main class="content">
+
+            <section class="card">
+                <h2>Introduction</h2>
+                <p>
+                    This API is a managed wrapper around <code class="bg">yt-dlp</code> that downloads YouTube
+                    videos and audio for you. Instead of shipping native binaries, dealing with rate limits,
+                    throttling and format selection yourself, you submit a job and we handle resolution,
+                    extraction, validation and binary delivery.
+                </p>
+                <p>
+                    The service is <strong>asynchronous by design</strong> — downloads can take seconds to
+                    minutes — so every request returns a job id you poll until the media is ready. This keeps
+                    requests fast and bounded, even for large or slow-to-resolve videos.
+                </p>
+            </section>
+
+            <section class="card">
+                <h2>Business Use Cases</h2>
+                <ul>
+                    <li><strong>Media archiving:</strong> Save educational videos, lectures or talks offline.</li>
+                    <li><strong>Podcast / audio production:</strong> Extract high-quality audio (mp3/m4a/wav).</li>
+                    <li><strong>Content research:</strong> Ingest media for analysis, captioning or remixing.</li>
+                    <li><strong>Embedded players:</strong> Pre-fetch assets so your player starts instantly.</li>
+                    <li><strong>Bulk workflows:</strong> Queue many jobs in parallel; downloads scale independently.</li>
+                </ul>
+            </section>
+
+            <section class="card">
+                <h3>Problems Solved</h3>
+                <ul class="problems">
+                    <li><strong>Transience failures:</strong> YouTube throttles and rate-limits. The API retries with exponential backoff and only fails a job after exhausting recoveries.</li>
+                    <li><strong>Format chaos:</strong> Many codecs/containers — pass a simple <code class="bg">format</code> + <code class="bg">quality</code> and the API resolves the right stream.</li>
+                    <li><strong>Blocking requests:</strong> Long downloads would time out a sync API. Jobs run out-of-band and are polled, keeping latency low.</li>
+                    <li><strong>Inconsistent availability:</strong> Age-gated or removed videos produce structured, machine-readable errors, not raw scraper failures.</li>
+                    <li><strong>Deployment complexity:</strong> No need to run yt-dlp on every host — download once, centrally, as a managed service.</li>
+                </ul>
+            </section>
+
+            <section class="card">
+                <h2>Quick Start</h2>
+                <ol class="problems">
+                    <li>Subscribe on RapidAPI to obtain your <code class="bg">X-RapidAPI-Key</code> &amp; <code class="bg">X-RapidAPI-Host</code>.</li>
+                    <li>Submit a video:</li>
+                </ol>
+<pre><code class="bash"><span class="cmt"># Replace YOUR_RAPIDAPI_KEY with your real key.</span>
+curl -X POST "https://reliable-youtube-download.p.rapidapi.com/v1/download" \
+  -H "X-RapidAPI-Key: YOUR_RAPIDAPI_KEY" \
+  -H "X-RapidAPI-Host: reliable-youtube-download.p.rapidapi.com" \
+  -H "Content-Type: application/json" \
+  -d '{"url":"https://www.youtube.com/watch?v=dQw4w9WgXcQ","format":"mp4","quality":"720p"}'</code></pre>
+                <p>Copy the returned <code class="bg">jobId</code>, then poll until <code class="bg">status</code> reads <code class="bg">Completed</code>:</p>
+<pre><code class="bash">curl -X GET "https://reliable-youtube-download.p.rapidapi.com/v1/download/job_4f3a438375" \
+  -H "X-RapidAPI-Key: YOUR_RAPIDAPI_KEY"</code></pre>
+                <p>Finally, stream the file from the <code class="bg">downloadUrl</code> / content endpoint.</p>
+            </section>
+
+            <section class="card">
+                <h2>How It Works</h2>
+                <p>
+                    Each job progresses through a lifecycle: <code class="bg">Queued → Processing → Completed</code>.
+                    Processing has stages — <code class="bg">Resolving → Downloading → Validating → Finalizing</code> — and progress (0–100) is pollable as a progress bar. If a transient failure occurs during <code class="bg">Downloading</code>, the API retries automatically and bumps the <code class="bg">attempts</code> counter. Inspect <code class="bg">timeline</code> for a full audit trail.
+                </p>
+            </section>
+
+        </main>
+        <aside class="toc">
+            <h4>On this page</h4>
+            <ul>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#business-use-cases">Business Use Cases</a></li>
+                <li><a href="#problems-solved">Problems Solved</a></li>
+                <li><a href="#quick-start">Quick Start</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+            </ul>
+        </aside>
+    </div>
+</div>

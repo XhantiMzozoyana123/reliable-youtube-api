@@ -1,0 +1,32 @@
+@{
+    var ctrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var act = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@(ViewData["Title"] ?? "Docs") - Reliable YouTubeAPI by MyRapidAPI</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-container">
+            <nav class="site-nav">
+                <span class="site-logo">Reliable YouTube<span>API</span> by MyRapidAPI</span>
+                <div class="site-tabs">
+                    <a class="site-tab @(ctrl == "Home" ? "active" : "")" href="@Url.Action("Index", "Home")">Home</a>
+                    <a class="site-tab @(ctrl == "Docs" ? "active" : "")" href="@Url.Action("Index", "Docs")">Documentation</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <main class="main">
+        @RenderBody()
+    </main>
+    <footer class="site-footer">
+        Reliable YouTubeAPI by MyRapidAPI · ASP.NET Core · Consumed via RapidAPI
+    </footer>
+</body>
+</html>

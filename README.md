@@ -114,3 +114,13 @@ dotnet test YoutubeDownload.Api.slnx
 ```bash
 dotnet run --project src/YoutubeDownload.Api --urls http://localhost:5000
 ```
+
+## Documentation site (MVC)
+
+In addition to the JSON API, the app hosts a developer-friendly **documentation website** (ASP.NET Core MVC + Razor views) so consumers can read the API reference in a browser. This is meant for the external RapidAPI documentation link.
+
+- **Home** — `/` — introduction, business use cases, problems solved, and a Quick Start.
+- **Docs index** — `/docs` — full list of endpoints with one-click links to each.
+- **Per-endpoint reference** — `/Docs/CreateJob`, `/Docs/JobStatus`, `/Docs/Formats`, `/Docs/Cancel`, `/Docs/Content`, `/Docs/AccountUsage`, `/Docs/Health` — request schemas, headers, parameters, response codes, worked JSON examples and cURL snippets.
+
+> The documentation site is **publicly browsable** (no API key required). The `/v1/*` and `/v1/account/*` Web API endpoints keep their existing authentication behavior unchanged.

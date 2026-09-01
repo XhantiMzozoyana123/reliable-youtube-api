@@ -6,7 +6,7 @@ using YoutubeDownload.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddControllers()
+    .AddControllersWithViews()
     .AddJsonOptions(o =>
     {
         o.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
@@ -21,6 +21,7 @@ var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<ApiKeyMiddleware>();
+app.UseStaticFiles();
 
 if (app.Environment.IsDevelopment())
 {
@@ -28,4 +29,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapControllers();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.Run();

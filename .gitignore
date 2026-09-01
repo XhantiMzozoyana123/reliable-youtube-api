@@ -11,6 +11,7 @@ obj/
 
 ## Runtime data
 App_Data/
+*.err
 
 ## OS
 .DS_Store

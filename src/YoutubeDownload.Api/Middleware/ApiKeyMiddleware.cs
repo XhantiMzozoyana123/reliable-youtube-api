@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 
 namespace YoutubeDownload.Api.Middleware;
 
@@ -57,8 +57,16 @@ public sealed class ApiKeyMiddleware
                && _options.AllowedKeys.Contains(key);
     }
 
+    private static readonly PathString[] ExemptPrefixes =
+        { "/health", "/openapi", "/css", "/js", "/lib", "/images", "/favicon.ico", "/home", "/docs" };
+
+    /// <summary>
+    /// Routes visible from the documentation website or serving static assets are exempt
+    /// from API-key checks, mirroring /health and /openapi. API consumers still authenticate
+    /// on every /v1/* and /account/* route.
+    /// </summary>
     private static bool IsExempt(PathString path) =>
-        path.StartsWithSegments("/health") || path.StartsWithSegments("/openapi");
+        path == "/" || ExemptPrefixes.Any(p => path.StartsWithSegments(p));
 }
 
 public sealed class ApiKeyOptions
